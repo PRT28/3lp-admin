@@ -49,8 +49,8 @@ export default function RiderTable() {
               </TableCell>
               <TableCell align="right">{row.orderPending?"true":"false"}</TableCell>
               <TableCell align="right">{row.riderName}</TableCell>
-              <TableCell align="right">{row.checkInTime.toString()}</TableCell>
-              <TableCell align="right">{row.checkOutTime.toString()}</TableCell>
+              <TableCell align="right">{row.checkInTime?.toString()??"--"}</TableCell>
+              <TableCell align="right">{row.checkOutTime?.toString()??"--"}</TableCell>
             </TableRow>
           ))}
         </TableBody>

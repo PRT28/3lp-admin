@@ -24,8 +24,10 @@ export default function AdminContextProvider({ children }) {
   };
   const addRider = async (name) => {
     try {
+        console.log(name,userDetails)
       if(userDetails===null || userDetails.role!==0) return;
       // call the api here for the rider
+  
       setRiderList((prev) => [
         ...prev,
         {

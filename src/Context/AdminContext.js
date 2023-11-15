@@ -10,7 +10,7 @@ export const AdminContext = createContext({
 
 export default function AdminContextProvider({ children }) {
   const [riderList, setRiderList] = useState([]);
-  const {userDetails} = useContext(AuthContext);
+  const { userDetails } = useContext(AuthContext);
   useEffect(() => {
     fetchRiders();
   }, []);
@@ -24,12 +24,11 @@ export default function AdminContextProvider({ children }) {
   };
   const addRider = async (name) => {
     try {
-        console.log(name,userDetails)
-      if(userDetails===null || userDetails.role!==0) return;
+      console.log(name, userDetails);
+      if (userDetails === null || userDetails.role !== 0) return;
       // call the api here for the rider
-  
+
       setRiderList((prev) => [
-        ...prev,
         {
           index: riderList.length,
           riderId: Math.random() * 10,
@@ -38,6 +37,7 @@ export default function AdminContextProvider({ children }) {
           checkInTime: null,
           checkOutTime: null,
         },
+        ...prev,
       ]);
     } catch (err) {
       console.log(err);
@@ -46,7 +46,7 @@ export default function AdminContextProvider({ children }) {
 
   const removeRider = async (riderId) => {
     try {
-      if(userDetails===null || userDetails.role!==0) return;
+      if (userDetails === null || userDetails.role !== 0) return;
       //call the api
       setRiderList((prev) => prev.filter((rider) => rider.id !== riderId));
     } catch (err) {

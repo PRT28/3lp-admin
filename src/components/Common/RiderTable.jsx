@@ -36,13 +36,13 @@ export default function RiderTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {riderList.map((row) => (
+          {riderList.map((row,index) => (
             <TableRow
               key={row.name}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.index}
+                {index+1}
               </TableCell>
               <TableCell component="th" scope="row">
                 {row.riderId}

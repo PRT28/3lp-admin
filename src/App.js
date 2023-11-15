@@ -5,6 +5,11 @@ import Home from "./pages/Home";
 import { useContext } from "react";
 import { AuthContext } from "./Context/AuthContext";
 import Login from "./pages/Login";
+import { Box } from "@mui/material";
+import Sidebar from "./components/Common/Sidebar";
+import CreateOrders from "./pages/CreateOrders";
+import Orders from "./pages/Orders";
+import Track from "./pages/Track";
 
 function App() {
   const { userDetails } = useContext(AuthContext);
@@ -14,10 +19,16 @@ function App() {
     authState = true;
   }
   return (
-    <Routes>
-      <Route path="/" element={<Home />}></Route>
-      <Route path="/login" element={<Login />}></Route>
-    </Routes>
+    <Box sx={{ display: "flex", alignSelf: "flex-start" }}>
+      {userDetails?.authState && <Sidebar />}
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/createOrder" element={<CreateOrders />}></Route>
+        <Route path="/track" element={<Track />}></Route>
+        <Route path="/orders" element={<Orders />}></Route>
+      </Routes>
+    </Box>
   );
 }
 

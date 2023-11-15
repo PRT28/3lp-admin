@@ -14,11 +14,11 @@ export default function AuthContextProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(()=> {
-    if(userDetails!==null && userDetails.authState) {
-        navigate("/");
+    if(userDetails===null || !userDetails.authState) {
+        navigate("/login");
     }
     else {
-        navigate("/login")
+      navigate("/")
     }
   },[userDetails])
 

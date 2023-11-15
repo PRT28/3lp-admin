@@ -15,6 +15,7 @@ const Header = () => {
         justifyContent: "space-between",
         p: 4,
         borderRadius: "40px",
+       
       }}
     >
       <Box sx={{textAlign:"center"}}>

@@ -4,6 +4,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { Modal } from "@mui/material";
 import { AdminContext } from "../../Context/AdminContext";
 import { TextField } from "@mui/material";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const { signOut, userDetails } = useContext(AuthContext);
@@ -14,9 +15,12 @@ const Navbar = () => {
   const [name, setName] = useState("");
 
   const handleAddRider = async () => {
-       await addRider(name)
-       handleClose();
-  }
+    await addRider(name);
+    handleClose();
+  };
+
+  const location = useLocation();
+
   return (
     <Box
       sx={{
@@ -37,16 +41,18 @@ const Navbar = () => {
         >
           Logout
         </Button>
-        {userDetails !== null && userDetails.role === 0 && (
-          <Button
-            sx={{ display: "block", borderRadius: "30px" }}
-            variant="contained"
-            onClick={handleOpen}
-          >
-            {" "}
-            + Add Rider
-          </Button>
-        )}
+        {userDetails !== null &&
+          userDetails.role === 0 &&
+          location.pathname === "/" && (
+            <Button
+              sx={{ display: "block", borderRadius: "30px" }}
+              variant="contained"
+              onClick={handleOpen}
+            >
+              {" "}
+              + Add Rider
+            </Button>
+          )}
       </Box>
       <Modal open={open} onClose={handleClose}>
         <Box
@@ -59,18 +65,18 @@ const Navbar = () => {
             borderRadius: "30px",
           }}
         >
-           <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h4">
-        Enter the name of Rider
-      </Typography>
+          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h4">
+            Enter the name of Rider
+          </Typography>
           <TextField
             onChange={(e) => setName(e.target.value)}
             label="Rider's name"
             variant="outlined"
             type="text"
-            sx = {{width:"100%"}}
+            sx={{ width: "100%" }}
           />
           <Button
-            sx={{ display: "block", mx:"auto",width:"100%",mt:2 }}
+            sx={{ display: "block", mx: "auto", width: "100%", mt: 2 }}
             variant="contained"
             onClick={handleAddRider}
           >

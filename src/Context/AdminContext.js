@@ -2,13 +2,15 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { deliveryEntries } from "../mockdata/data";
 import { AuthContext } from "./AuthContext";
 import { ordersArray } from "../mockdata/data";
+import axios from "axios";
+import { FACILYTS_BASE_URL } from "../Configs";
 
 export const AdminContext = createContext({
   riderList: [],
   ordersList: [],
   addRider: async () => {},
-  removeRider: async() => {},
-  createOrder:async (
+  removeRider: async () => {},
+  createOrder: async (
     pickupAddress,
     pickupPhone,
     deliveryAddress,
@@ -22,14 +24,14 @@ export const AdminContext = createContext({
     deliveryCoordinatesY,
     typeOfVehicle
   ) => {},
-  assignOrders:async (riderId) => {},
-  check : async (checkIn,checkOut,date)=> {}
+  assignOrders: async (riderId) => {},
+  check: async (checkIn, checkOut, date) => {},
 });
 
 export default function AdminContextProvider({ children }) {
   const [riderList, setRiderList] = useState([]);
   const [ordersList, setOrdersList] = useState([]);
-  const { userDetails } = useContext(AuthContext);
+  const { userDetails, authToken } = useContext(AuthContext);
   useEffect(() => {
     fetchRiders();
     fetchOrders();
@@ -37,7 +39,10 @@ export default function AdminContextProvider({ children }) {
   const fetchRiders = async () => {
     try {
       // call api to fetch riders
-      setRiderList(deliveryEntries);
+      const response = await axios.get(`${FACILYTS_BASE_URL}/auth/riders`, {
+        headers: { Authorization: `${authToken}` },
+      });
+      setRiderList(response.data.content.riders);
     } catch (err) {
       console.log(err);
     }

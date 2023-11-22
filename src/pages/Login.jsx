@@ -1,9 +1,14 @@
 import React, { useContext, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Button } from "@mui/material";
 import { AuthContext } from "../Context/AuthContext";
 import login from "../assets/login.svg";
+import { useTheme } from "@mui/material";
+import { tokens } from "../theme";
+import logo from "../assets/LOGO.svg";
+import { Link } from "react-router-dom";
+
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -31,30 +36,42 @@ const Login = () => {
     await signIn(email, password);
     setLoginStage(2);
   };
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   return (
     <>
-      <Box
+      <Paper
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "40%",
+          width: "30%",
           mx: "auto",
           gap: 2,
+          mt: 10,
+          p: 5,
+          borderRadius: "20px",
+          pb: 4,
+          backgroundColor: colors.primary[600],
         }}
       >
+        <img src={logo} alt="" />
         <Typography
-          variant="h4"
-          sx={{ my: 5, textAlign: "center", color: "#6C63FF", fontWeight: 600 }}
+          variant="h1"
+          sx={{
+            my: 5,
+            textAlign: "center",
+            color: colors.yellowAccent[500],
+            fontWeight: 600,
+          }}
         >
-          Login Here 👇..
+          Login
         </Typography>
 
-        <img src={login} alt="" />
         <TextField
           onChange={(e) => setEmail(e.target.value)}
           label="Email"
-          variant="outlined"
+          variant="filled"
           type="email"
           error={err}
           helperText={err && "*Enter a valid email address"}
@@ -62,7 +79,7 @@ const Login = () => {
         <TextField
           onChange={(e) => setPassword(e.target.value)}
           label="Password"
-          variant="outlined"
+          variant="filled"
           error={password.length !== 0 && password.length <= 8}
           helperText={
             password.length !== 0 &&
@@ -71,13 +88,43 @@ const Login = () => {
           }
         />
         <Button
-          onClick={handleLogin}
+          sx={{
+            display: "block",
+            borderRadius: "10px",
+            border: `1px solid ${colors.yellowAccent[500]}`,
+            "&:hover": {
+              border: `1px solid ${colors.yellowAccent[500]}`,
+              backgroundColor: colors.yellowAccent[500],
+            },
+            px: 2,
+            py: 1,
+            background: colors.yellowAccent[500],
+          }}
           variant="contained"
+          onClick={handleLogin}
           disabled={loginStage === 1}
         >
-          Sign In
+          {" "}
+          <Typography variant="h5" sx={{}}>
+            Login
+          </Typography>
         </Button>
-      </Box>
+        <Box>
+          <Typography variant="h4" sx={{ color: colors.grey[500], mt: 2 }}>
+            {"Don't"} have an account?{" "}
+            <Link
+              style={{
+                color: colors.yellowAccent[500],
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              to="/register"
+            >
+              Register
+            </Link>
+          </Typography>
+        </Box>
+      </Paper>
     </>
   );
 };

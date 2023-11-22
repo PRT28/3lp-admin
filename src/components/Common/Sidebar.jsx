@@ -1,6 +1,8 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Typography, Box, useTheme } from "@mui/material";
+import { tokens } from "../../theme";
+import logo from "../../assets/LOGO.svg";
 
 const routes = [
   {
@@ -19,55 +21,69 @@ const routes = [
     name: "Track Shipment",
     route: "/track",
   },
-  
 ];
 const Sidebar = () => {
-    const location = useLocation();
-   
+  const location = useLocation();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
         position: "sticky",
-
         flexBasis: "15%",
         height: "100vh",
         top: 0,
         display: "flex",
         flexDirection: "column",
         pt: 5,
-        background: "#F3EEEA",
+        backgroundColor: colors.primary[800],
+        pl: 2,
       }}
     >
-      <Typography
-        sx={{
-          color: "#6C63FF",
-          fontWeight: 600,
-          textAlign: "left",
-          mb: 5,
-          ml: 2,
-        }}
-        variant="h4"
-      >
-        RidoTech
-      </Typography>
-      {routes.map((route, index) => (
-        <Link
-          key={index}
+      <Box sx={{ height: "36px", width: "158.542px" }}>
+        <img
+          src={logo}
           style={{
-            displLinky: "block",
+            objectFit: "contain",
+            height: "100%",
             width: "100%",
-            textAlign: "center",
-            fontSize: "1.5em",
-            textDecoration: location.pathname===route.route?"underline":"none",
-            margin: 15,
-            textAlign: "left",
-            color: "black",
+            cursor: "pointer",
           }}
-          to={route.route}
-        >
-          {route.name}
-        </Link>
-      ))}
+          onClick={()=>navigate("/")}
+          alt=""
+        />
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          mt: 10,
+          justifyContent: "left",
+          width: "fit-content",
+        }}
+      >
+        {routes.map((route, index) => (
+          <Link
+            key={index}
+            style={{
+              display: "block",
+              width: "100%",
+              textAlign: "left",
+              fontSize: "1.5em",
+              color:
+                location.pathname === route.route
+                  ? colors.yellowAccent[500]
+                  : "white",
+              margin: 15,
+              textDecoration: "none",
+            }}
+            to={route.route}
+          >
+            {route.name}
+          </Link>
+        ))}
+      </Box>
     </Box>
   );
 };

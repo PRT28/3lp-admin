@@ -12,6 +12,8 @@ import { Button } from "@mui/material";
 import { Modal, Typography, TextField, Box } from "@mui/material";
 import { useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import {useTheme} from "@mui/material";
+import { tokens } from "../../theme";
 
 export default function OrdersTable() {
   const { ordersList } = useContext(AdminContext);
@@ -26,57 +28,59 @@ export default function OrdersTable() {
     await assignOrders(Id);
     handleClose();
   };
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
+    <TableContainer component={Paper} sx={{ mt: 2, background: colors.primary[500]}}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
+        <TableHead  sx={{ background: colors.primary[600] }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600 }}>Sr No</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>Order ID</TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }}>Sr No</TableCell>
+            <TableCell sx={{ fontSize: "24px" }}>Order ID</TableCell>
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Pickup Address
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Pickup Phone
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Delivery Address
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Delivery Phone
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Package Type
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Parcel Value
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               User ID
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Pickup Coordinates (X)
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Pickup Coordinates (Y)
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Delivery Coordinates (X)
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Delivery Coordinates (Y)
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Type of Vehicle
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Created At
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Updated At
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
               Assign Order
             </TableCell>
           </TableRow>
@@ -110,7 +114,15 @@ export default function OrdersTable() {
                 {row.updatedAt?.toString() ?? "--"}
               </TableCell>
               <TableCell align="right">
-                <Button onClick={handleOpen} variant="contained">Assign Order</Button>
+              <Button
+                  sx={{
+                    backgroundColor: colors.blueAccent[700],
+                    "&:hover": { backgroundColor: colors.blueAccent[800] },
+                  }}
+                  variant="contained"
+                >
+                  Assign Order
+                </Button>
               </TableCell>
             </TableRow>
           ))}

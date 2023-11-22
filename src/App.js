@@ -5,30 +5,35 @@ import Home from "./pages/Home";
 import { useContext } from "react";
 import { AuthContext } from "./Context/AuthContext";
 import Login from "./pages/Login";
-import { Box } from "@mui/material";
+import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import Sidebar from "./components/Common/Sidebar";
 import CreateOrders from "./pages/CreateOrders";
 import Orders from "./pages/Orders";
 import Track from "./pages/Track";
+import { ColorModeContext, useMode } from "./theme";
+import Register from "./pages/Register";
 
 function App() {
-  const { userDetails } = useContext(AuthContext);
+  const { userDetails,authToken } = useContext(AuthContext);
+  const [theme, colorMode] = useMode();
 
-  let authState = false;
-  if (userDetails !== null && userDetails.authState === true) {
-    authState = true;
-  }
   return (
-    <Box sx={{ display: "flex", alignSelf: "flex-start" }}>
-      {userDetails?.authState && <Sidebar />}
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/createOrder" element={<CreateOrders />}></Route>
-        <Route path="/track" element={<Track />}></Route>
-        <Route path="/orders" element={<Orders />}></Route>
-      </Routes>
-    </Box>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box sx={{ display: "flex", alignSelf: "flex-start" }}>
+          {authToken !==undefined && <Sidebar />}
+          <Routes>
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/createOrder" element={<CreateOrders />}></Route>
+            <Route path="/track" element={<Track />}></Route>
+            <Route path="/orders" element={<Orders />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+          </Routes>
+        </Box>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 

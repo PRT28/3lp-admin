@@ -18,15 +18,20 @@ import {
 } from "@mui/material";
 import AuthContext from "../../Context/AuthContext";
 import { useState } from "react";
+import { useTheme } from "@mui/material";
+import { tokens } from "../../theme";
 
 export default function RiderTable() {
   const { riderList } = useContext(AdminContext);
 
-  const { addRider, removeRider,check } = useContext(AdminContext);
+  const { addRider, removeRider, check } = useContext(AdminContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [name, setName] = useState("");
+
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   //calender modal
   const [openCal, setOpenCal] = useState(false);
@@ -43,31 +48,44 @@ export default function RiderTable() {
   };
 
   const handleCheck = async () => {
-    console.log(checkout,checkin,date)
-    if(!checkin || !checkout || !date) return;
-    await check(checkin,checkout,date)
+    console.log(checkout, checkin, date);
+    if (!checkin || !checkout || !date) return;
+    await check(checkin, checkout, date);
     handleCloseCal();
   };
   return (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
+    <TableContainer
+      component={Paper}
+      sx={{ mt: 2, background: colors.primary[500] }}
+    >
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
+        <TableHead sx={{ background: colors.primary[600] }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600 }}>Sr No</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>Rider Id</TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
-              Orders Pending
+            <TableCell sx={{ fontSize: "24px" }}>
+              Sr No
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
-              Rider name
+            <TableCell sx={{ fontSize: "24px" }}>
+              Username
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
-              Check In time
+            <TableCell sx={{ fontSize: "24px" }} align="right">
+              Mobile Number
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
-              Checkout time
+            <TableCell sx={{ fontSize: "24px" }} align="right">
+              Checked In
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
+            <TableCell sx={{ fontSize: "24px" }} align="right">
+              Zip Code
+            </TableCell>
+            <TableCell sx={{ fontSize: "24px" }} align="right">
+              User Role
+            </TableCell>
+            <TableCell sx={{ fontSize: "24px" }} align="right">
+              Address
+            </TableCell>
+            <TableCell sx={{ fontSize: "24px" }} align="right">
+              UpdatedAt
+            </TableCell>
+            <TableCell sx={{ fontSize: "24px" }} align="center">
               Actions
             </TableCell>
           </TableRow>
@@ -82,27 +100,44 @@ export default function RiderTable() {
                 {index + 1}
               </TableCell>
               <TableCell component="th" scope="row">
-                {row.riderId}
+                {row.username}
               </TableCell>
+              <TableCell align="right">{row.mobile}</TableCell>
               <TableCell align="right">
-                {row.orderPending ? "true" : "false"}
+                {row.checked_in ? "true" : "false"}
               </TableCell>
-              <TableCell align="right">{row.riderName}</TableCell>
-              <TableCell align="right">
-                {row.checkInTime?.toString() ?? "--"}
-              </TableCell>
-              <TableCell align="right">
-                {row.checkOutTime?.toString() ?? "--"}
-              </TableCell>
-              <TableCell align="right" sx={{ display: "flex" }}>
+              <TableCell align="right">{row.zip_code}</TableCell>
+              <TableCell align="right">{row.user_role}</TableCell>
+              <TableCell align="right">{row.address}</TableCell>
+              <TableCell align="center">{row.updatedAt}</TableCell>
+              <TableCell align="right" sx={{ display: "flex", gap: 2 }}>
                 <Button
-                  sx={{ color: "red" }}
+                  sx={{
+                    backgroundColor: colors.redAccent[700],
+                    "&:hover": { backgroundColor: colors.redAccent[800] },
+                  }}
+                  variant="contained"
                   onClick={() => removeRider(row.riderId)}
                 >
                   Delete
                 </Button>
-                <Button>Edit</Button>
-                <Button onClick={handleOpenCal} sx={{ color: "green" }}>
+                <Button
+                  sx={{
+                    backgroundColor: colors.blueAccent[700],
+                    "&:hover": { backgroundColor: colors.blueAccent[800] },
+                  }}
+                  variant="contained"
+                >
+                  Edit
+                </Button>
+                <Button
+                  onClick={handleOpenCal}
+                  sx={{
+                    backgroundColor: colors.greenAccent[700],
+                    "&:hover": { backgroundColor: colors.greenAccent[800] },
+                  }}
+                  variant="contained"
+                >
                   Calender
                 </Button>
               </TableCell>

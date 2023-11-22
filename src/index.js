@@ -4,19 +4,19 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import AuthContextProvider from "./Context/AuthContext";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter} from "react-router-dom";
 import AdminContextProvider from "./Context/AdminContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <AuthContextProvider>
         <AdminContextProvider>
           <App />
         </AdminContextProvider>
       </AuthContextProvider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 );
 

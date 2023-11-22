@@ -4,7 +4,10 @@ import { AuthContext } from "../../Context/AuthContext";
 import { Modal } from "@mui/material";
 import { AdminContext } from "../../Context/AdminContext";
 import { TextField } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import LOGO from "../../assets/LOGO.svg";
+import { tokens } from "../../theme";
+import { useTheme } from "@mui/material";
 
 const Navbar = () => {
   const { signOut, userDetails } = useContext(AuthContext);
@@ -13,46 +16,65 @@ const Navbar = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [name, setName] = useState("");
-
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const handleAddRider = async () => {
     await addRider(name);
     handleClose();
   };
 
   const location = useLocation();
-
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        mt: 5,
+        mt: 3,
         alignItems: "center",
       }}
     >
-      <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h4">
-        RidoTech
-      </Typography>
+      <img onClick={()=>navigate("/")} style={{cursor:"pointer"}} src={LOGO} alt="" />
       <Box sx={{ display: "flex", gap: 3 }}>
         <Button
-          sx={{ display: "block", borderRadius: "30px" }}
-          variant="contained"
+          sx={{
+            display: "block",
+            borderRadius: "10px",
+            border: `1px solid ${colors.yellowAccent[500]}`,
+            "&:hover": { border: `1px solid ${colors.yellowAccent[500]}` },
+            px: 2,
+            py: 1,
+          }}
+          variant="outlined"
           onClick={signOut}
         >
-          Logout
+          <Typography variant="h5" sx={{ color: colors.yellowAccent[500] }}>
+            Logout
+          </Typography>
         </Button>
-        {userDetails !== null &&
-          userDetails.role === 0 &&
-          location.pathname === "/" && (
-            <Button
-              sx={{ display: "block", borderRadius: "30px" }}
-              variant="contained"
-              onClick={handleOpen}
-            >
-              {" "}
-              + Add Rider
-            </Button>
-          )}
+        {location.pathname === "/" && (
+          <Button
+            sx={{
+              display: "block",
+              borderRadius: "10px",
+              border: `1px solid ${colors.yellowAccent[500]}`,
+              "&:hover": {
+                border: `1px solid ${colors.yellowAccent[500]}`,
+                backgroundColor: colors.yellowAccent[500],
+              },
+              px: 2,
+              py: 1,
+              background: colors.yellowAccent[500],
+            }}
+            variant="contained"
+            onClick={handleOpen}
+          >
+            {" "}
+            <Typography variant="h5" sx={{}}>
+              + Add User
+            </Typography>
+          </Button>
+        )}
       </Box>
       <Modal open={open} onClose={handleClose}>
         <Box

@@ -1,0 +1,1 @@
+export const FACILYTS_BASE_URL = "https://facilyts-backend.onrender.com"

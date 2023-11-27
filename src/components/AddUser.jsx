@@ -8,13 +8,15 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import logo from "../assets/LOGO.svg";
 import { Link } from "react-router-dom";
+import { AdminContext } from "../Context/AdminContext";
 
-
-const Register = () => {
-  const { registerUser } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
+const AddUser = ({ handleAddition }) => {
+  const { userDetails } = useContext(AuthContext);
+  const { addUsers } = useContext(AdminContext);
+  console.log(userDetails);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -28,13 +30,15 @@ const Register = () => {
     typeOfVehicle: "",
     gender: "",
   });
+  const handleAddUser = async () => {
+    if (formData && formData.user_role < userDetails.user_role) return;
+    setLoading(true);
+    await addUsers(formData);
+    handleAddition();
+    setLoading(false);
+  };
   const handleChange = (field) => (event) => {
     setFormData({ ...formData, [field]: event.target.value });
-  };
-  const handleRegister = async () => {
-    setLoading(true);
-    await registerUser(formData);
-    setLoading(false);
   };
 
   return (
@@ -53,23 +57,12 @@ const Register = () => {
           backgroundColor: colors.primary[600],
         }}
       >
-        <img src={logo} alt="" />
-        <Typography
-          variant="h1"
-          sx={{
-            my: 2,
-            textAlign: "center",
-            color: colors.yellowAccent[500],
-            fontWeight: 600,
-          }}
-        >
-          Register
-        </Typography>
         <TextField
           label="Username"
           variant="filled"
           value={formData.username}
           onChange={handleChange("username")}
+          required
         />
 
         <TextField
@@ -77,6 +70,7 @@ const Register = () => {
           variant="filled"
           value={formData.address}
           onChange={handleChange("address")}
+          required
         />
         <Box sx={{ display: "flex", gap: 3 }}>
           {" "}
@@ -85,6 +79,7 @@ const Register = () => {
             variant="filled"
             value={formData.mobile}
             onChange={handleChange("mobile")}
+            required
           />
           <TextField
             label="Password"
@@ -92,6 +87,7 @@ const Register = () => {
             type="password"
             value={formData.password}
             onChange={handleChange("password")}
+            required
           />
         </Box>
 
@@ -101,6 +97,7 @@ const Register = () => {
           type="email"
           value={formData.email}
           onChange={handleChange("email")}
+          required
         />
 
         <TextField
@@ -108,6 +105,7 @@ const Register = () => {
           variant="filled"
           value={formData.zip_code}
           onChange={handleChange("zip_code")}
+          required
         />
         <Box sx={{ display: "flex", gap: 3 }}>
           <TextField
@@ -116,6 +114,7 @@ const Register = () => {
             type="number"
             value={formData.user_role}
             onChange={handleChange("user_role")}
+            required
           />
 
           <TextField
@@ -124,6 +123,7 @@ const Register = () => {
             type="number"
             value={formData.account_type}
             onChange={handleChange("account_type")}
+            required
           />
         </Box>
         <Box sx={{ display: "flex", gap: 3 }}>
@@ -132,6 +132,7 @@ const Register = () => {
             variant="filled"
             value={formData.typeOfVehicle}
             onChange={handleChange("typeOfVehicle")}
+            required
           />
 
           <TextField
@@ -139,6 +140,7 @@ const Register = () => {
             variant="filled"
             value={formData.gender}
             onChange={handleChange("gender")}
+            required
           />
         </Box>
 
@@ -156,32 +158,17 @@ const Register = () => {
             background: colors.yellowAccent[500],
           }}
           variant="contained"
-          onClick={handleRegister}
+          onClick={() => handleAddUser(formData)}
           disabled={loading}
         >
           {" "}
           <Typography variant="h5" sx={{}}>
-            Register
+            + Add User
           </Typography>
         </Button>
-        <Box>
-          <Typography variant="h4" sx={{ color: colors.grey[500], mt: 2 }}>
-            Already have an account?{" "}
-            <Link
-              style={{
-                color: colors.yellowAccent[500],
-                cursor: "pointer",
-                textDecoration: "none",
-              }}
-              to="/login"
-            >
-              Login
-            </Link>
-          </Typography>
-        </Box>
       </Paper>
     </>
   );
 };
 
-export default Register;
+export default AddUser;

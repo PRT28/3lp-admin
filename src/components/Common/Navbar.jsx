@@ -8,6 +8,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import LOGO from "../../assets/LOGO.svg";
 import { tokens } from "../../theme";
 import { useTheme } from "@mui/material";
+import AddUser from "../AddUser";
+import { Snackbar, Alert } from "@mui/material";
 
 const Navbar = () => {
   const { signOut, userDetails } = useContext(AuthContext);
@@ -25,6 +27,23 @@ const Navbar = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  //
+
+  const [openSnack, setOpenSnack] = useState(false);
+
+  const handleCloseSnack = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnack(false);
+  };
+
+  const handleAddition = () => {
+    setOpen(false);
+    setOpenSnack(true);
+  };
   return (
     <Box
       sx={{
@@ -34,7 +53,12 @@ const Navbar = () => {
         alignItems: "center",
       }}
     >
-      <img onClick={()=>navigate("/")} style={{cursor:"pointer"}} src={LOGO} alt="" />
+      <img
+        onClick={() => navigate("/")}
+        style={{ cursor: "pointer" }}
+        src={LOGO}
+        alt=""
+      />
       <Box sx={{ display: "flex", gap: 3 }}>
         <Button
           sx={{
@@ -77,36 +101,22 @@ const Navbar = () => {
         )}
       </Box>
       <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            p: 5,
-            background: "white",
-            width: "fit-content",
-            mx: "auto",
-            my: 10,
-            borderRadius: "30px",
-          }}
-        >
-          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h4">
-            Enter the name of Rider
-          </Typography>
-          <TextField
-            onChange={(e) => setName(e.target.value)}
-            label="Rider's name"
-            variant="outlined"
-            type="text"
-            sx={{ width: "100%" }}
-          />
-          <Button
-            sx={{ display: "block", mx: "auto", width: "100%", mt: 2 }}
-            variant="contained"
-            onClick={handleAddRider}
-          >
-            {" "}
-            + Add Rider
-          </Button>
-        </Box>
+        <AddUser handleAddition={handleAddition} />
       </Modal>
+      <Snackbar
+        open={openSnack}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        onClose={handleCloseSnack}
+      >
+        <Alert
+          onClose={handleCloseSnack}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          <Typography variant="h5">User added successfully!</Typography>
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

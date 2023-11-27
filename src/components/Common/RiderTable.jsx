@@ -53,39 +53,39 @@ export default function RiderTable() {
     await check(checkin, checkout, date);
     handleCloseCal();
   };
+
   return (
     <TableContainer
       component={Paper}
-      sx={{ mt: 2, background: colors.primary[500] }}
+      sx={{ background: colors.primary[500], p: 2, borderRadius: "10px" }}
     >
+      <Typography variant="h4" sx={{ fontWeight: 600, my: 2 }}>
+        {" Rider's List"}
+      </Typography>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead sx={{ background: colors.primary[600] }}>
           <TableRow>
-            <TableCell sx={{ fontSize: "24px" }}>
-              Sr No
-            </TableCell>
-            <TableCell sx={{ fontSize: "24px" }}>
-              Username
-            </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="right">
+            <TableCell sx={{ fontSize: "1.125em" }}>Sr No</TableCell>
+            <TableCell sx={{ fontSize: "1.125em" }}>Username</TableCell>
+            <TableCell sx={{ fontSize: "1.125em" }} align="right">
               Mobile Number
             </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="right">
+            <TableCell sx={{ fontSize: "1.125em" }} align="right">
               Checked In
             </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="right">
+            <TableCell sx={{ fontSize: "1.125em" }} align="right">
               Zip Code
             </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="right">
+            <TableCell sx={{ fontSize: "1.125em" }} align="right">
               User Role
             </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="right">
+            <TableCell sx={{ fontSize: "1.125em" }} align="right">
               Address
             </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="right">
+            <TableCell sx={{ fontSize: "1.125em" }} align="right">
               UpdatedAt
             </TableCell>
-            <TableCell sx={{ fontSize: "24px" }} align="center">
+            <TableCell sx={{ fontSize: "1.125em" }} align="center">
               Actions
             </TableCell>
           </TableRow>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FACILYTS_BASE_URL } from "../Configs";
 import Cookies from "js-cookie";
 // SUPER ADMIN = 0
@@ -21,6 +21,7 @@ export default function AuthContextProvider({ children }) {
     JSON.parse(localStorage.getItem("userDetails")) ?? null
   );
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   console.log(authToken);
@@ -29,8 +30,8 @@ export default function AuthContextProvider({ children }) {
     if (authToken === undefined) {
       navigate("/login");
     } else {
-      console.log("hii " + authToken);
-      navigate("/");
+      if (location.pathname === "/login" || location.pathname === "/register")
+        navigate("/");
     }
   }, [authToken]);
 
@@ -48,13 +49,14 @@ export default function AuthContextProvider({ children }) {
       );
       setUserDetails(response.data.content.user);
     } catch (err) {
+      alert("Something went wrong");
       console.log(err);
     }
   };
   const signIn = async (email, password) => {
     try {
       const response = await axios.post(`${FACILYTS_BASE_URL}/auth/login`, {
-       numberOrEmail : email,
+        numberOrEmail: email,
         password,
       });
       Cookies.set("authToken", response.data.content.token);

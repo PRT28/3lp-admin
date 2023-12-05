@@ -16,42 +16,42 @@ import {
   Box,
   colors,
 } from "@mui/material";
-import AuthContext from "../../Context/AuthContext";
+import CalenderModal from "../CalenderModal";
+import { AuthContext } from "../../Context/AuthContext";
 import { useState } from "react";
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import EditRider from "../EditRider";
+import axios from "axios";
+import { FACILYTS_BASE_URL } from "../../Configs";
 
 export default function RiderTable() {
   const { riderList } = useContext(AdminContext);
-
-  const { addRider, removeRider, check } = useContext(AdminContext);
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [name, setName] = useState("");
-
+  const { userDetails, authToken } = useContext(AuthContext);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  //calender modal
-  const [openCal, setOpenCal] = useState(false);
-  const handleOpenCal = () => setOpenCal(true);
-  const handleCloseCal = () => setOpenCal(false);
+  const [currRider, setcurrRider] = useState("");
 
-  const [checkin, setcheckin] = useState();
-  const [checkout, setcheckout] = useState();
-  const [date, setdate] = useState();
+  //handle edit modal
+  const [openCalender, setopenCalender] = useState(false);
+  const [calenderData, setCalenderData] = useState([]);
 
-  const handleAddRider = async () => {
-    await addRider(name);
-    handleClose();
+  const handleSelectRider = async (id) => {
+    await fetchCalender(id);
+    setopenCalender(true);
   };
 
-  const handleCheck = async () => {
-    console.log(checkout, checkin, date);
-    if (!checkin || !checkout || !date) return;
-    await check(checkin, checkout, date);
-    handleCloseCal();
+  const fetchCalender = async (riderId) => {
+    try {
+      const response = await axios.get(
+        `${FACILYTS_BASE_URL}/attendence/calender/${riderId}`,
+        { headers: { Authorization: authToken } }
+      );
+      console.log(response.data.content.data);
+    } catch (err) {
+      alert("Calender Info is not available for this rider!");
+    }
   };
 
   return (
@@ -117,7 +117,7 @@ export default function RiderTable() {
                     "&:hover": { backgroundColor: colors.redAccent[800] },
                   }}
                   variant="contained"
-                  onClick={() => removeRider(row.riderId)}
+                  onClick={() => alert("This feature is on hold")}
                 >
                   Delete
                 </Button>
@@ -127,16 +127,17 @@ export default function RiderTable() {
                     "&:hover": { backgroundColor: colors.blueAccent[800] },
                   }}
                   variant="contained"
+                  onClick={() => alert("This feature is on hold")}
                 >
                   Edit
                 </Button>
                 <Button
-                  onClick={handleOpenCal}
                   sx={{
                     backgroundColor: colors.greenAccent[700],
                     "&:hover": { backgroundColor: colors.greenAccent[800] },
                   }}
                   variant="contained"
+                  onClick={() => handleSelectRider(row._id)}
                 >
                   Calender
                 </Button>
@@ -145,83 +146,9 @@ export default function RiderTable() {
           ))}
         </TableBody>
       </Table>
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            p: 5,
-            background: "white",
-            width: "fit-content",
-            mx: "auto",
-            my: 10,
-            borderRadius: "30px",
-          }}
-        >
-          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h4">
-            Enter the name of Rider
-          </Typography>
-          <TextField
-            onChange={(e) => setName(e.target.value)}
-            label="Rider's name"
-            variant="outlined"
-            type="text"
-            sx={{ width: "100%" }}
-          />
-          <Button
-            sx={{ display: "block", mx: "auto", width: "100%", mt: 2 }}
-            variant="contained"
-            onClick={handleAddRider}
-          >
-            {" "}
-            + Add Rider
-          </Button>
-        </Box>
-      </Modal>
-
-      {/* //calender modal */}
-      <Modal open={openCal} onClose={handleCloseCal}>
-        <Box
-          sx={{
-            p: 5,
-            background: "white",
-            width: "fit-content",
-            mx: "auto",
-            my: 10,
-            borderRadius: "30px",
-          }}
-        >
-          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h6">
-            Enter Checkin Time
-          </Typography>
-          <input
-            onChange={(e) => setcheckin(e.target.value)}
-            type="time"
-            sx={{ width: "100%", padding: "10px", display: "block" }}
-          />
-          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h6">
-            Enter Checkin Out Time
-          </Typography>
-          <input
-            onChange={(e) => setcheckout(e.target.value)}
-            type="time"
-            sx={{ width: "100%", padding: "10px", display: "block" }}
-          />
-          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h6">
-            Enter Date
-          </Typography>
-          <input
-            onChange={(e) => setdate(e.target.value)}
-            type="date"
-            sx={{ width: "100%", padding: "10px", display: "block" }}
-          />
-          <Button
-            sx={{ display: "block", mx: "auto", width: "100%", mt: 2 }}
-            variant="contained"
-            onClick={handleCheck}
-          >
-            {" "}
-            Check In
-          </Button>
-        </Box>
+      
+      <Modal open={openCalender} onClose={() => setopenCalender(false)}>
+        <CalenderModal calenderData={calenderData} />
       </Modal>
     </TableContainer>
   );

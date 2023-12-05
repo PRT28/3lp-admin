@@ -20,7 +20,6 @@ const Home = () => {
     <Container>
       <Navbar />
       <Header />
-
       <Paper
         sx={{
           border: `1px solid ${colors.yellowAccent[500]}`,
@@ -57,7 +56,7 @@ const Home = () => {
             borderRadius: "10px",
 
             "&:hover": {
-              backgroundColor:tab === 1 ? colors.yellowAccent[500] : "inherit",
+              backgroundColor: tab === 1 ? colors.yellowAccent[500] : "inherit",
             },
             px: 2,
             py: 1,
@@ -72,7 +71,7 @@ const Home = () => {
           </Typography>
         </Button>
       </Paper>
-      {tab===0?<RiderTable />:<UserTable/>}
+      {tab === 0 ? <RiderTable /> : <UserTable />}
       <Footer />
     </Container>
   );

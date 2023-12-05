@@ -9,6 +9,10 @@ import { useTheme } from "@emotion/react";
 import { tokens } from "../theme";
 import DynamicMapEmbed from "../components/Common/DynamicEmbed";
 import Autocomplete from "react-google-autocomplete";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import {
   setKey,
   setDefaults,
@@ -22,13 +26,13 @@ import {
   RequestType,
 } from "react-geocode";
 
-setDefaults({
-  key: "xxxxx", // Your API key here.
-  language: "en", // Default language for responses.
-  region: "es", // Default region for responses.
-});
-
 const CreateOrders = () => {
+  setDefaults({
+    key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Your API key here.
+    language: "en", // Default language for responses.
+    region: "es", // Default region for responses.
+  });
+
   const [orderData, setOrderData] = useState({
     pickupPoint_address: "",
     pickupPoint_number: "",
@@ -45,7 +49,7 @@ const CreateOrders = () => {
 
   const { createOrder } = useContext(AdminContext);
   const navigate = useNavigate();
-
+  // console.log("DSDS",process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
   const handleOrderCreation = async () => {
     if (
       orderData.pickupCoordinatesX === "" ||
@@ -55,7 +59,7 @@ const CreateOrders = () => {
       orderData.deliveryCoordinatesY === ""
     )
       return;
-      console.log(orderData)
+    console.log(orderData);
     await createOrder(orderData);
     // navigate("/orders");
   };
@@ -65,27 +69,57 @@ const CreateOrders = () => {
 
   const genLatAndLong = async (address) => {
     // generating random lat and long
+    const response = await fromAddress(address);
+    console.log(response);
+
     return { lat: Math.random() * 100, long: Math.random() * 100 };
   };
   const handlePickupAddress = async (address) => {
-    if (orderData.pickupPoint_address === "") return;
-    const coordinates = await genLatAndLong(address);
-    setOrderData({
-      ...orderData,
-      pickupCoordinatesX: coordinates.lat,
-      pickupCoordinatesY: coordinates.long,
-    });
+    try {
+      if (address === "") return;
+      console.log(address.formatted_address);
+      const response = await fromAddress(address.formatted_address);
+      const { lat, lng } = response.results[0].geometry.location;
+
+      setOrderData((orderData) => {
+        return {
+          ...orderData,
+          pickupPoint_address: address.formatted_address,
+          pickupCoordinatesX: lat,
+          pickupCoordinatesY: lng,
+        };
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDeliveryCoordinates = async (address) => {
-    if (orderData.delivery_address === "") return;
-    const coordinates = await genLatAndLong(address);
-    setOrderData({
-      ...orderData,
-      deliveryCoordinatesX: coordinates.lat,
-      deliveryCoordinatesY: coordinates.long,
-    });
+    try {
+      if (address === "") return;
+      console.log(address.formatted_address);
+      console.log("dsadasdad", orderData);
+      const response = await fromAddress(address.formatted_address);
+      const { lat, lng } = response.results[0].geometry.location;
+      console.log(lat, lng);
+
+      setOrderData((orderData) => {
+        return {
+          ...orderData,
+          delivery_address: address.formatted_address,
+          deliveryCoordinatesX: lat,
+          deliveryCoordinatesY: lng,
+        };
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const handlePackageType = (event) => {
+    setOrderData({ ...orderData, package_type: event.target.value });
+  };
+
   return (
     <Box
       sx={{
@@ -103,43 +137,21 @@ const CreateOrders = () => {
       >
         Create a New Order
       </Typography>
-      <Box sx={{ display: "flex", gap: 2 }}>
-        <TextField
-          onChange={(e) =>
-            setOrderData({ ...orderData, pickupPoint_address: e.target.value })
-          }
-          placeholder="Pickup Address"
-          variant="outlined"
-          sx={{
-            border: `1px solid ${colors.grey[400]}`,
-            borderRadius: "5px",
-            flexBasis: "80%",
-          }}
-          required
-        />
-        <Button
-          sx={{
-            display: "block",
-            borderRadius: "5px",
-            border: `1px solid ${colors.yellowAccent[500]}`,
-            "&:hover": {
-              border: `1px solid ${colors.yellowAccent[500]}`,
-              backgroundColor: colors.yellowAccent[500],
-            },
 
-            background: colors.yellowAccent[500],
-          }}
-          onClick={handlePickupAddress}
-          variant="contained"
-        >
-          {" "}
-          <Typography variant="h6" sx={{ textTransform: "none" }}>
-            Generate Coordinates
-          </Typography>
-        </Button>
-      </Box>
-      {orderData.pickupCoordinatesX !== "" &&
-        orderData.pickupCoordinatesY !== "" && (
+      <Autocomplete
+        apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+        placeholder="Pickup Address"
+        onPlaceSelected={(place) => handlePickupAddress(place)}
+        style={{
+          backgroundColor: "transparent",
+          color: "grey",
+          padding: 20,
+          borderRadius: "10px",
+        }}
+      />
+
+      {orderData?.pickupCoordinatesX !== "" &&
+        orderData?.pickupCoordinatesY !== "" && (
           <DynamicMapEmbed
             latitude={orderData.pickupCoordinatesX}
             longitude={orderData.pickupCoordinatesY}
@@ -154,46 +166,25 @@ const CreateOrders = () => {
         sx={{ border: `1px solid ${colors.grey[400]}`, borderRadius: "5px" }}
         required
       />
-      <Box sx={{ display: "flex", gap: 2 }}>
-        <TextField
-          onChange={(e) =>
-            setOrderData({ ...orderData, delivery_address: e.target.value })
-          }
-          placeholder="Delivery Address"
-          variant="outlined"
-          sx={{
-            border: `1px solid ${colors.grey[400]}`,
-            borderRadius: "5px",
-            flexBasis: "90%",
-          }}
-          required
-        />
-        <Button
-          sx={{
-            display: "block",
-            borderRadius: "5px",
-            border: `1px solid ${colors.yellowAccent[500]}`,
-            "&:hover": {
-              border: `1px solid ${colors.yellowAccent[500]}`,
-              backgroundColor: colors.yellowAccent[500],
-            },
 
-            background: colors.yellowAccent[500],
-          }}
-          onClick={handleDeliveryCoordinates}
-          variant="contained"
-        >
-          {" "}
-          <Typography variant="h6" sx={{ textTransform: "none" }}>
-            Generate Coordinates
-          </Typography>
-        </Button>
-      </Box>
-      {orderData.deliveryCoordinatesX !== "" &&
-        orderData.deliveryCoordinatesY !== "" && (
+      <Autocomplete
+        apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+        placeholder="Delivery Address"
+        onPlaceSelected={(place) => handleDeliveryCoordinates(place)}
+        style={{
+          backgroundColor: "transparent",
+          color: "grey",
+          padding: 10,
+          borderRadius: "10px",
+          padding: 20,
+        }}
+      />
+
+      {orderData?.deliveryCoordinatesX !== "" &&
+        orderData?.deliveryCoordinatesY !== "" && (
           <DynamicMapEmbed
-            latitude={orderData.pickupCoordinatesX}
-            longitude={orderData.pickupCoordinatesY}
+            latitude={orderData.deliveryCoordinatesX}
+            longitude={orderData.deliveryCoordinatesY}
           />
         )}
       <TextField
@@ -205,25 +196,43 @@ const CreateOrders = () => {
         sx={{ border: `1px solid ${colors.grey[400]}`, borderRadius: "5px" }}
         required
       />
-      <TextField
-        onChange={(e) =>
-          setOrderData({ ...orderData, package_type: e.target.value })
-        }
-        placeholder="Package Type"
-        variant="outlined"
-        sx={{ border: `1px solid ${colors.grey[400]}`, borderRadius: "5px" }}
-        required
-      />
-      <TextField
-        onChange={(e) =>
-          setOrderData({ ...orderData, parcel_value: e.target.value })
-        }
-        placeholder="Parcel Value"
-        variant="outlined"
-        sx={{ border: `1px solid ${colors.grey[400]}`, borderRadius: "5px" }}
-        type="number"
-        required
-      />
+      <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ flexBasis: "50%" }}>
+          <FormControl fullWidth variant="filled">
+            <InputLabel id="demo-simple-select-label">Package Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={orderData.package_type}
+              label="Package Type"
+              onChange={handlePackageType}
+              required
+            >
+              <MenuItem value={"Document"}>Document</MenuItem>
+              <MenuItem value={"Food"}>Food</MenuItem>
+              <MenuItem value={"Cloth"}>Cloth</MenuItem>
+              <MenuItem value={"Groceries"}>Groceries</MenuItem>
+              <MenuItem value={"Flower"}>Flower</MenuItem>
+              <MenuItem value={"Cake"}>Cake</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <TextField
+          onChange={(e) =>
+            setOrderData({ ...orderData, parcel_value: e.target.value })
+          }
+          placeholder="Parcel Value"
+          variant="outlined"
+          sx={{
+            border: `1px solid ${colors.grey[400]}`,
+            borderRadius: "5px",
+            flexBasis: "50%",
+          }}
+          type="number"
+          required
+        />
+      </Box>
+
       <TextField
         onChange={(e) =>
           setOrderData({ ...orderData, typeOfVehicle: e.target.value })

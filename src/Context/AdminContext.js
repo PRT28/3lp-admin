@@ -10,7 +10,7 @@ export const AdminContext = createContext({
   riderList: [],
   ordersList: [],
   userList: [],
-  addRider: async () => {},
+  editRider: async (riderId, data) => {},
   removeRider: async () => {},
   createOrder: async (orderData) => {},
   assignOrders: async (riderId) => {},
@@ -24,12 +24,14 @@ export default function AdminContextProvider({ children }) {
   const [ordersList, setOrdersList] = useState([]);
   const { userDetails, authToken } = useContext(AuthContext);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!authToken) return;
     fetchRiders();
     fetchOrders();
     fetchUsers();
   }, [authToken]);
+
   const fetchRiders = async () => {
     try {
       // call api to fetch riders
@@ -74,23 +76,17 @@ export default function AdminContextProvider({ children }) {
     });
     setOrdersList(response.data.content.orders);
   };
-  const addRider = async (name) => {
+  const editRider = async (id, data) => {
     try {
-     
-      if (userDetails === null || userDetails.role !== 0) return;
-      // call the api here for the rider
-
-      setRiderList((prev) => [
+      // if (userDetails === null || userDetails.role !== 0) return;
+      // // call the api here for the rider
+      const response = await axios.post(
+        `${FACILYTS_BASE_URL}/auth/rider/updateDetails/${id}`,
         {
-          index: riderList.length,
-          riderId: Math.random() * 10,
-          orderPending: null,
-          riderName: name,
-          checkInTime: null,
-          checkOutTime: null,
-        },
-        ...prev,
-      ]);
+          headers: { Authorization: `${authToken}` },
+        }
+      );
+      console.log(response);
     } catch (err) {
       console.log(err);
     }
@@ -113,7 +109,6 @@ export default function AdminContextProvider({ children }) {
   const removeRider = async (riderId) => {
     try {
       if (userDetails === null || userDetails.role !== 0) return;
-      console.log("hii");
       //call the api
       setRiderList((prev) => prev.filter((rider) => rider.riderId !== riderId));
     } catch (err) {
@@ -153,7 +148,7 @@ export default function AdminContextProvider({ children }) {
     riderList,
     ordersList,
     userList,
-    addRider,
+    editRider,
     removeRider,
     createOrder,
     assignOrders,

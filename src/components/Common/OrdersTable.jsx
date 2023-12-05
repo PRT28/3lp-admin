@@ -28,7 +28,7 @@ export default function OrdersTable() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [riders, setRiders] = useState(undefined);
-  const assignOrders = async (orderId) => {
+  const setRiderInfoForOrder = async (orderId) => {
     try {
       setOpen(true);
       setRiders([]);
@@ -38,9 +38,9 @@ export default function OrdersTable() {
           headers: { Authorization: authToken },
         }
       );
+      setId(orderId);
       setRiders(response.data.content.riderdetails);
     } catch (err) {
-      console.log(err);
       setRiders(undefined);
     }
   };
@@ -48,12 +48,29 @@ export default function OrdersTable() {
     setOpen(false);
     setRiders(undefined);
   };
-  const handleAssignOrder = async () => {
-    await assignOrders(Id);
+  const handleAssignOrder = async (orderId, riderId) => {
+    try {
+      console.log(riderId);
+      console.log(orderId);
+      const response = await axios.post(
+        `${FACILYTS_BASE_URL}/notification/create`,
+        {
+          orderId,
+          riderId,
+        },
+        {
+          headers: { Authorization: authToken },
+        }
+      );
+      alert("Order assigned successfully !");
+      console.log(response);
+    } catch (err) {
+      alert("Something went wrong");
+    }
+
     handleClose();
   };
-
-  console.log(riders);
+  console.log(ordersList);
   return (
     <TableContainer
       component={Paper}
@@ -145,7 +162,7 @@ export default function OrdersTable() {
                     "&:hover": { backgroundColor: colors.blueAccent[800] },
                   }}
                   variant="contained"
-                  onClick={() => assignOrders(row._id)}
+                  onClick={() => setRiderInfoForOrder(row._id)}
                 >
                   Assign Order
                 </Button>
@@ -171,18 +188,28 @@ export default function OrdersTable() {
           >
             Available Riders
           </Typography>
-          <Box sx={{ my: 2,textAlign:"center" }}>
+          <Box sx={{ my: 2, textAlign: "center" }}>
             {!riders && " No riders are available :("}
-            {riders && riders.length==0 && "Loading.."} 
+            {riders && riders.length == 0 && "Loading.."}
             {riders?.map((rider, index) => {
+              console.log("dsdas", rider);
               return (
-                <Paper sx={{background:colors.primary[600],p:1,cursor:"pointer"}} key={index}>
-                  <Typography sx={{textAlign:"center"}} variant="h3">{rider.username}</Typography>
+                <Paper
+                  sx={{
+                    background: colors.primary[600],
+                    p: 1,
+                    cursor: "pointer",
+                  }}
+                  key={index}
+                  onClick={() => handleAssignOrder(Id, rider._id)}
+                >
+                  <Typography sx={{ textAlign: "center" }} variant="h3">
+                    {rider.username}
+                  </Typography>
                 </Paper>
               );
             })}
           </Box>
-         
         </Box>
       </Modal>
     </TableContainer>

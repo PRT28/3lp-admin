@@ -23,13 +23,18 @@ import { tokens } from "../../theme";
 import { IconButton } from "@mui/material";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { Menu, MenuItem } from "@mui/material";
+import EditUser from "../EditUser";
 
 export default function UserTable() {
   const { userList } = useContext(AdminContext);
 
   const { addRider, removeRider, check } = useContext(AdminContext);
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const [currRow, setCurrRow] = useState(null);
+  const handleOpen = (row) => {
+    setCurrRow(row);
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
   const [name, setName] = useState("");
 
@@ -114,9 +119,9 @@ export default function UserTable() {
             <TableCell sx={{ fontSize: "1.125em" }} align="right">
               UpdatedAt
             </TableCell>
-            {/* <TableCell sx={{ fontSize: "1.125em" }} align="center">
+            <TableCell sx={{ fontSize: "1.125em" }} align="center">
               Actions
-            </TableCell> */}
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -141,61 +146,24 @@ export default function UserTable() {
                 <TableCell align="right">{row.user_role}</TableCell>
                 <TableCell align="right">{row.address}</TableCell>
                 <TableCell align="center">{row.updatedAt}</TableCell>
-                {/* <TableCell align="right" sx={{ display: "flex", gap: 2 }}>
-                  <Button
-                    sx={{
-                      backgroundColor: colors.redAccent[700],
-                      "&:hover": { backgroundColor: colors.redAccent[800] },
-                    }}
-                    variant="contained"
-                    onClick={() => removeRider(row.riderId)}
-                  >
-                    Delete
-                  </Button>
+                <TableCell align="right" sx={{ display: "flex", gap: 2 }}>
                   <Button
                     sx={{
                       backgroundColor: colors.blueAccent[700],
                       "&:hover": { backgroundColor: colors.blueAccent[800] },
                     }}
                     variant="contained"
+                    onClick={() => handleOpen(row)}
                   >
                     Edit
                   </Button>
-                </TableCell> */}
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>
       </Table>
       <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            p: 5,
-            background: "white",
-            width: "fit-content",
-            mx: "auto",
-            my: 10,
-            borderRadius: "30px",
-          }}
-        >
-          <Typography sx={{ color: "#6C63FF", fontWeight: 600 }} variant="h4">
-            Enter the name of Rider
-          </Typography>
-          <TextField
-            onChange={(e) => setName(e.target.value)}
-            label="Rider's name"
-            variant="outlined"
-            type="text"
-            sx={{ width: "100%" }}
-          />
-          <Button
-            sx={{ display: "block", mx: "auto", width: "100%", mt: 2 }}
-            variant="contained"
-            onClick={handleAddRider}
-          >
-            {" "}
-            + Add Rider
-          </Button>
-        </Box>
+        <EditUser userData={currRow} handleAddition={handleClose} />
       </Modal>
       <Menu
         id="basic-menu"
